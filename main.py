@@ -5,6 +5,8 @@ from time import sleep
 from sys import stdout
 from sys import argv
 
+import bluetooth_server
+
 # Identify clients trying to authenticate
 # Identify authenticated clients
 # Identify client advertisments
@@ -24,6 +26,8 @@ verbose_mode = True if len(argv) >= 3 and str(argv[2]) == "true" else False
 
 nearby_devices = list()
 
+# List of Access Points MAC address, so we can filter them out and only find clients
+APs = []
 
 global last_x_packets
 last_x_packets = list()
@@ -57,9 +61,14 @@ def clear_missing_devices():
         last_x_packets = list()
 
 def scan_callback(pack):
-    if pack.getlayer(Dot11).subtype == 4 and pack.getlayer(Dot11).type == 0:
-        sig_stren = pack[scapy.layers.dot11.RadioTap].dBm_AntSignal
+#   if pkt.haslayer(Dot11Beacon):
+#       bss = pkt.getlayer(Dot11).addr2.upper()
+#       if bss not in APs:
+#           APs.append(bss)
 
+    #if pack.getlayer(Dot11).subtype == 4 and pack.getlayer(Dot11).type == 0:
+    if pack.getlayer(Dot11).type == 0 and not pack.haslayer(Dot11Beacon):
+        sig_stren = pack[scapy.layers.dot11.RadioTap].dBm_AntSignal
         og_addr = pack.getlayer(Dot11).addr2.upper() 
         addr2 = pack.getlayer(Dot11).addr2.upper()[:8] # The manufactuerer seems to stay the same
                                                        # and they randomize the last part.
@@ -82,10 +91,21 @@ def scan_callback(pack):
                 nearby_devices.append(addr2)
                 new_device_nearby(addr2, sig_stren)
 
+
 if __name__ == "__main__":
     print("Starting scan...")
+
+    # Make a thread to clear out the old packets
     packet_clear_thread = Thread(target=clear_missing_devices)
     packet_clear_thread.daemon = True
     packet_clear_thread.start()
-    sniff(iface=wifi_dev, prn=scan_callback, monitor=True)
+
+    # Start the 802.11 sniffing
+    sniff(prn=scan_callback, iface=wifi_dev)
+
+
+    # Make a thread to respond to the bluetooth connection
+#   bluetooth_thread = Thread(target=bluetooth_server.main)
+#   bluetooth_thread.daemon = True
+#   bluetooth_thread.start()
 
