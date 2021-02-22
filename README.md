@@ -18,13 +18,12 @@ other than making me feel really cool.
 There's no python environment because I am lazy, so do the following instead: <br><br>
 ```
 + Clone the repo into some folder
-+ Install the following python packages
++ Install the following python packages:
+    + scapy
 + Install airmon-ng (from the aircrack suite)
 + Set your wifi card to monitor mode
 + Run the script
 ```
-
-<br>
 
 If you want to do something fun, try using `entr` or a similar program to set off a notification when people
 get too close to you.
