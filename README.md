@@ -15,6 +15,7 @@ used to trigger an alert when someone is nearby. This way if some world class sh
 the beacon packets his smartphone is sending out will give him away.
 
 ## More detail on how it works
+### How it actually works
 Right now the script is only set to monitor the beacon probe packets. I intend to change this so that
 dataframes and other shenanigans are picked up as well, but I'm a busy boi. You might have heard somewhere
 that the mac addresses used in WiFi packets send from Android and Apple devices are randomized, and
@@ -23,6 +24,15 @@ company, so devices are tracked by the first few hex characters of their address
 
 While this data might not be good enough for commercial tracking (such as trade-shows or supermarkets) it's
 good enough to detect the presence of other people- which makes it cool but useless.
+
+### How I wished it worked
+For most WiFi devices, once they connect to a network they start using their actual MAC address. So
+theoretically if you pretended your SSID was `AT&T WiFi` or `Starbuck's Wifi` you could get a bunch of devices
+to connect, and then manage them more specifically!
+
+<p align="center">
+  <img src="./wait_thats_illegal.jpeg"/>
+</p>
 
 
 ## Installation
