@@ -25,6 +25,14 @@ company, so devices are tracked by the first few hex characters of their address
 While this data might not be good enough for commercial tracking (such as trade-shows or supermarkets) it's
 good enough to detect the presence of other people- which makes it cool but useless.
 
+Some fun changes to make in the future would be:<br>
+```
++ Since these packets are sent out in certain intervals, you could determine the number of people more
+accurately by the frequency of a mac address being sent out.
++ If you got two antenna you could track the locations of people (roughly) based off the signal strength.
++ You could wire this to a smart watch with a "number of people" counter on it.
+```
+
 ### How I wished it worked
 For most WiFi devices, once they connect to a network they start using their actual MAC address. So
 theoretically if you pretended your SSID was `AT&T WiFi` or `Starbuck's Wifi` you could get a bunch of devices
@@ -34,7 +42,7 @@ to connect, and then manage them more specifically!
   <img src="./wait_thats_illegal.jpeg"/>
 </p>
 
-it would also mean that you can be tracked fairly easily, but looking for the man walking around broadcasting
+it would also mean that you can be tracked fairly easily, just by looking for the man walking around broadcasting
 every known SSID on the planet. And would be super battery intensive. 
 
 
