@@ -1,3 +1,8 @@
+# For more mostly useless soykaf, please consider going to:
+# http://jarlold.netai.net
+# I'll make a Discord bot or something for you if you pay me.
+# -Jarlold
+
 from scapy.all import *
 from datetime import datetime
 from threading import Thread
@@ -50,7 +55,7 @@ def clear_missing_devices():
                 nearby_devices.remove(i)
                 new_device_left(i)
 
-       if verbose_mode: # If we're in verbose mode, print out which devices are in the recent packets
+        if verbose_mode: # If we're in verbose mode, print out which devices are in the recent packets
            print("last x packets:")
            for i in last_x_packets:
                print("  --> " + i)
@@ -63,10 +68,11 @@ def clear_missing_devices():
 
 # Runs when scapy finds a packet
 def scan_callback(pack):
-    #if pack.getlayer(Dot11).type == 0 and not pack.haslayer(Dot11Beacon):
-
     # Checks if the packet is type management, subtype probe request
+    #if pack.getlayer(Dot11).type == 0 and not pack.haslayer(Dot11Beacon):
+    #if pack.getlayer(Dot11).subtype == 4:
     if pack.getlayer(Dot11).subtype == 4 and pack.getlayer(Dot11).type == 0:
+
         sig_stren = pack[scapy.layers.dot11.RadioTap].dBm_AntSignal
         og_addr = pack.getlayer(Dot11).addr2.upper() 
         addr2 = pack.getlayer(Dot11).addr2.upper()[:8] # The manufactuerer seems to stay the same
