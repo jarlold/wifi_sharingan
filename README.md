@@ -34,6 +34,9 @@ to connect, and then manage them more specifically!
   <img src="./wait_thats_illegal.jpeg"/>
 </p>
 
+it would also mean that you can be tracked fairly easily, but looking for the man walking around broadcasting
+every known SSID on the planet. And would be super battery intensive. 
+
 
 ## Installation
 ### Linux Installation
