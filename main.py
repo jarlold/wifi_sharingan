@@ -5,11 +5,6 @@ from time import sleep
 from sys import stdout
 from sys import argv
 
-import bluetooth_server
-
-# Identify clients trying to authenticate
-# Identify authenticated clients
-# Identify client advertisments
 
 help_advice = """
 WifiSharingan, a program to detect nearby 802.11 probes, so no ninja sneak up on you.
@@ -18,56 +13,60 @@ Usage: wifi_sharingan [iface] [verbose (true|false)]
     iwconfig if you're a massochist I guess)
 """
 
-if len(argv) < 2:
+# Parse the command line arguments.
+if len(argv) < 2 or "--help" in argv or "-help" in argv: # check for help
     print(help_advice)
 
-wifi_dev = str(argv[1])
-verbose_mode = True if len(argv) >= 3 and str(argv[2]) == "true" else False
+wifi_dev = str(argv[1]) # get the wifi device
+verbose_mode = True if len(argv) >= 3 and str(argv[2]) == "true" else False # check for verbose
 
-nearby_devices = list()
 
-# List of Access Points MAC address, so we can filter them out and only find clients
-APs = []
-
+# A record of the packets from the last 50 seconds, will be used to determine when a device
+# has left.
 global last_x_packets
 last_x_packets = list()
 
+# List to hold the devices within broadcasting range that we've heard from recently.
+nearby_devices = list()
+
+# Prints out the "device joined" notice
 def new_device_nearby(addr, sig_stren):
     hour, minute, second = datetime.now().hour, datetime.now().minute, datetime.now().second
     print("DEVICE --> : [{}:{}:{}] : {} : {}".format(hour, minute, second, addr, sig_stren))
 
+# Prints out the "device left" notice
 def new_device_left(addr):
     hour, minute, second = datetime.now().hour, datetime.now().minute, datetime.now().second
     print("DEVICE <-- : [{}:{}:{}] : {}".format(hour, minute, second, addr))
 
+
+# Every 50 seconds, remove any nearby devices that we haven't heard from.
 def clear_missing_devices():
     global last_x_packets
     while True:
         sleep(50)
-        for i in nearby_devices:
+        for i in nearby_devices: # If the device is in nearby dev but not the recent packets, remove it
             if not i in last_x_packets:
                 nearby_devices.remove(i)
                 new_device_left(i)
 
-#       if verbose_mode:
-#           print("last x packets:")
-#           for i in last_x_packets:
-#               print("  --> " + i)
+       if verbose_mode: # If we're in verbose mode, print out which devices are in the recent packets
+           print("last x packets:")
+           for i in last_x_packets:
+               print("  --> " + i)
 
-#           print("nearby devices:")
-#           for i in nearby_devices:
-#               print("  --> " + i)
+           print("nearby devices:") # as well as which devices are considered "nearby"
+           for i in nearby_devices:
+               print("  --> " + i)
 
-        last_x_packets = list()
+        last_x_packets = list() # Reset the recent packets log.
 
+# Runs when scapy finds a packet
 def scan_callback(pack):
-#   if pkt.haslayer(Dot11Beacon):
-#       bss = pkt.getlayer(Dot11).addr2.upper()
-#       if bss not in APs:
-#           APs.append(bss)
+    #if pack.getlayer(Dot11).type == 0 and not pack.haslayer(Dot11Beacon):
 
-    #if pack.getlayer(Dot11).subtype == 4 and pack.getlayer(Dot11).type == 0:
-    if pack.getlayer(Dot11).type == 0 and not pack.haslayer(Dot11Beacon):
+    # Checks if the packet is type management, subtype probe request
+    if pack.getlayer(Dot11).subtype == 4 and pack.getlayer(Dot11).type == 0:
         sig_stren = pack[scapy.layers.dot11.RadioTap].dBm_AntSignal
         og_addr = pack.getlayer(Dot11).addr2.upper() 
         addr2 = pack.getlayer(Dot11).addr2.upper()[:8] # The manufactuerer seems to stay the same
@@ -102,10 +101,4 @@ if __name__ == "__main__":
 
     # Start the 802.11 sniffing
     sniff(prn=scan_callback, iface=wifi_dev)
-
-
-    # Make a thread to respond to the bluetooth connection
-#   bluetooth_thread = Thread(target=bluetooth_server.main)
-#   bluetooth_thread.daemon = True
-#   bluetooth_thread.start()
 
