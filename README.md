@@ -28,9 +28,12 @@ good enough to detect the presence of other people- which makes it cool but usel
 Some fun changes to make in the future would be:<br>
 ```
 + Since these packets are sent out in certain intervals, you could determine the number of people more
-accurately by the frequency of a mac address being sent out.
-+ If you got two antenna you could track the locations of people (roughly) based off the signal strength.
+   accurately by the frequency of a mac address being sent out.
++ If you got two antenna you could track the locations of people (roughly) based off the signal
+   strength.
 + You could wire this to a smart watch with a "number of people" counter on it.
++ Look up the mac addresses to determine the manufacturer, then filter out ones that don't make
+   cell phones.
 ```
 
 ### How I wished it worked
