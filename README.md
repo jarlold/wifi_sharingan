@@ -10,6 +10,8 @@ characteristic that increases the ninja's perception, allowing them to detect th
 I thought this was super cool and went to learn this skill, unfortunately according to Wikipedia ninja magic isn't real-
 so I improvised.
 
+tl;dr I made the "Ping" quickhack from Cyberpunk 2077 except it sucks.
+
 
 ## What does it do though?
 It tracks 802.11 probe request packets (And now other packets!) and can be
