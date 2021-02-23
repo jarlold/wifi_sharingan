@@ -3,10 +3,12 @@
   <img src="./sharingan.gif"/>
 </p>
 
-So in Naruto ninja can detect eachother's presence through their ninja senses, and they can have special
-eye-characteristics (such as sharingan) that allow them to detect more through ninja magic.<br><br>
+In Naruto, the ninja can detect eachother's presence through their ninja senses. Sharingan is a special eye
+characteristic that increases the ninja's perception, allowing them to even detect the presence of others even
+better (among other things).
 
-I thought this was super cool, but according to Wikipedia ninja magic isn't real- so I had to improvise. <br>
+I thought this was super cool and went to learn this skill, but according to Wikipedia ninja magic isn't real-
+so I improvised.
 
 
 ## What does it do though?
