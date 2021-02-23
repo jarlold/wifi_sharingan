@@ -69,6 +69,15 @@ def clear_missing_devices():
 
         last_x_packets = list() # Reset the recent packets log.
 
+# Cycle through wifi channels to try and capture as much as possible. Alternatively, set the channel
+# to 11 and leave it alone, since 11 is my favorite number.
+def cycle_channels():
+    while True:
+        for channel in range(1, 11):
+            sleep(1)
+            os.system('iwconfig {} channel {}'.format(wifi_dev, channel))
+
+
 # Runs when scapy finds a packet
 def scan_callback(pack):
 
@@ -81,9 +90,14 @@ def scan_callback(pack):
             if verbose_mode:
                 print("BEACON " + pack.getlayer(Dot11).addr2.upper())
 
-        # Make sure there are no beacons in the last_x_packets
+        # If a beacon was picked up sending a non-beacon-frame before it was picked up sending a beacon frame
+        # then it might've been logged in last_x_packets. So once we get a beacon-frame, we make sure it's not
+        # in last_x_packets, then clear the missing devices (which happens every 50 seconds automatically
+        # anyway). Without this, beacons might appear in the "DEVICE -->" log for a couple cycles. Which is 
+        # annoying.
         if pack.getlayer(Dot11).addr2.upper() in last_x_packets:
             last_x_packets.remove(pack.getlayer(Dot11).addr2.upper())
+            clear_missing_devices()
             
 
     # Checks if the packet is type management, subtype probe request
@@ -128,6 +142,11 @@ if __name__ == "__main__":
     packet_clear_thread = Thread(target=clear_missing_devices)
     packet_clear_thread.daemon = True
     packet_clear_thread.start()
+
+    # Make a thread to cycle wifi channels
+    cycle_channel_thread = Thread(target=cycle_channels)
+    cycle_channel_thread.daemon = True
+    cycle_channel_thread.start()
 
     # Start the 802.11 sniffing
     sniff(prn=scan_callback, iface=wifi_dev)
