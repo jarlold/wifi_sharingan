@@ -7,7 +7,7 @@ In Naruto, the ninja can detect eachother's presence through their ninja senses.
 characteristic that increases the ninja's perception, allowing them to even detect the presence of others even
 better (among other things).
 
-I thought this was super cool and went to learn this skill, but according to Wikipedia ninja magic isn't real-
+I thought this was super cool and went to learn this skill, unfortunately according to Wikipedia ninja magic isn't real-
 so I improvised.
 
 
