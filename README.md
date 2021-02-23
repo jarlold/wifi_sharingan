@@ -10,17 +10,16 @@ I thought this was super cool, but according to Wikipedia ninja magic isn't real
 
 
 ## What does it do though?
-It tracks 802.11 probe request packets (which are sent out by WiFi devices to detect available networks) and can be
+It tracks 802.11 probe request packets (And now other packets!) and can be
 used to trigger an alert when someone is nearby. This way if some world class shinobi tries to get the jump on you,
 the probe packets his smartphone is sending out will give him away.
 
 ## More detail on how it works
 ### How it actually works
-Right now the script is only set to monitor the probe request packets. I intend to change this so that
-dataframes and other shenanigans are picked up as well, but I'm a busy boi. You might have heard somewhere
-that the mac addresses used in WiFi packets send from Android and Apple devices are randomized, and
-that's mostly-true, however due to regulation, manufacturers can't broadcast with the MAC address of another
-company, so devices are tracked by the first few hex characters of their address.<br><br>
+This script monitors the probe request packets, dataframes, and other shenanigans sent out by WiFi devices.
+You might have heard somewhere that the mac addresses used in probe requests sent from Android and Apple devices are
+randomized, and that's mostly-true, however due to regulation, manufacturers can't broadcast with the MAC
+prefix of another company, so devices are tracked by the first three hex characters of their address.<br>
 
 While this data might not be good enough for commercial tracking (such as trade-shows or supermarkets) it's
 good enough to detect the presence of other people- which makes it cool but useless.
@@ -37,9 +36,9 @@ Some fun changes to make in the future would be:<br>
 ```
 
 ### How I wished it worked
-For most WiFi devices, once they connect to a network they start using their actual MAC address. So
-theoretically if you pretended your SSID was `AT&T WiFi` or `Starbuck's Wifi` you could get a bunch of devices
-to connect, and then manage them more specifically!
+Most WiFi devices not connected to a network don't use their full real MAC address in their probe requests,
+but once they are connected they typically do. So theoretically if you pretended your SSID was `AT&T WiFi`
+or `Starbuck's Wifi` you could get a bunch of devices to connect, and then manage them more specifically!
 
 <p align="center">
   <img src="./wait_thats_illegal.jpeg"/>

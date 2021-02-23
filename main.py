@@ -34,6 +34,9 @@ last_x_packets = list()
 # List to hold the devices within broadcasting range that we've heard from recently.
 nearby_devices = list()
 
+# We want to log which MAC address have sent out beacon-only packets so we can ignore them
+beacon_addresses = []
+
 # Prints out the "device joined" notice
 def new_device_nearby(addr, sig_stren):
     hour, minute, second = datetime.now().hour, datetime.now().minute, datetime.now().second
@@ -68,10 +71,31 @@ def clear_missing_devices():
 
 # Runs when scapy finds a packet
 def scan_callback(pack):
+
+    # Check if the packet is type management, subtype beacon
+    if pack.getlayer(Dot11).subtype == 8 and pack.getlayer(Dot11).type == 0:
+        # Record beacon frame sender addresses since they're probably beacons.
+        if not pack.getlayer(Dot11).addr2.upper() in beacon_addresses:
+            beacon_addresses.append(pack.getlayer(Dot11).addr2.upper())
+
+            if verbose_mode:
+                print("BEACON " + pack.getlayer(Dot11).addr2.upper())
+
+        # Make sure there are no beacons in the last_x_packets
+        if pack.getlayer(Dot11).addr2.upper() in last_x_packets:
+            last_x_packets.remove(pack.getlayer(Dot11).addr2.upper())
+            
+
     # Checks if the packet is type management, subtype probe request
-    #if pack.getlayer(Dot11).type == 0 and not pack.haslayer(Dot11Beacon):
-    #if pack.getlayer(Dot11).subtype == 4:
-    if pack.getlayer(Dot11).subtype == 4 and pack.getlayer(Dot11).type == 0:
+    #if pack.getlayer(Dot11).subtype == 4 and pack.getlayer(Dot11).type == 0:
+
+    # If a packet with a sender address is recieved, and it's not in the beacons list, and it's not
+    # a beacon frame, then we can parse it.
+    if (
+        pack.getlayer(Dot11).addr2 is not None
+        and pack.getlayer(Dot11).addr2.upper() not in beacon_addresses
+        and not (pack.getlayer(Dot11).subtype == 8 and pack.getlayer(Dot11).type == 0)
+        ):
 
         sig_stren = pack[scapy.layers.dot11.RadioTap].dBm_AntSignal
         og_addr = pack.getlayer(Dot11).addr2.upper() 
@@ -86,8 +110,8 @@ def scan_callback(pack):
             return
 
         # If we're in verbose mode, print packets even if the device isn't new to the scene
-        if verbose_mode:
-                new_device_nearby(og_addr, sig_stren)
+        #if verbose_mode:
+        #        new_device_nearby(og_addr, sig_stren)
 
         # When we're not in verbose mode, look for devices that aren't nearby, and notify the user
         # of their arrival
